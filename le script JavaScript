@@ -1,0 +1,23 @@
+async function askAI() {
+    const question = document.getElementById('question').value;
+    const responseElement = document.getElementById('response');
+
+    responseElement.innerText = "Chargement...";
+
+    const apiKey = 'VOTRE_CLE_API'; // Remplacez par votre clé API OpenAI
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+            model: "gpt-3.5-turbo", // ou un autre modèle
+            messages: [{ role: "user", content: question }]
+        })
+    });
+
+    const data = await response.json();
+    const answer = data.choices[0].message.content;
+    responseElement.innerText = answer;
+}
