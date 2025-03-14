@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Chat GPT</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat { width: 100%; height: 300px; overflow-y: scroll; border: 1px solid #ccc; }
+        #input { width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>Chat GPT</h1>
+    <div id="chat"></div>
+    <input type="text" id="input" placeholder="Tapez votre message ici..." />
+    <button id="send">Envoyer</button>
+
+    <script>
+        const chatDiv = document.getElementById('chat');
+        const input = document.getElementById('input');
+        const sendButton = document.getElementById('send');
+
+        sendButton.onclick = async () => {
+            const userInput = input.value;
+            chatDiv.innerHTML += `<div>Vous: ${userInput}</div>`;
+            input.value = '';
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer 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'
+                },
+                body: JSON.stringify({
+                    model: "gpt-3.5-turbo",
+                    messages: [{ role: "user", content: userInput }]
+                })
+            });
+
+            if (!response.ok) {
+                chatDiv.innerHTML += `<div>Erreur: ${response.statusText}</div>`;
+                return;
+            }
+
+            const data = await response.json();
+            chatDiv.innerHTML += `<div>Chat GPT: ${data.choices[0].message.content}</div>`;
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        };
+    </script>
+</body>
+</html>
